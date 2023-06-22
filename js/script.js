@@ -276,6 +276,10 @@ async function search() {
 }
 
 function displaySearchResults(results) {
+    // Clear previous results
+    document.querySelector('#search-results').innerHTML = '';
+    document.querySelector('#search-results-heading').innerHTML = '';
+    document.querySelector('#pagination').innerHTML = '';
   results.forEach((result) => {
     const div = document.createElement('div');
     div.classList.add('card');
@@ -334,6 +338,31 @@ function displayPagination() {
     `;
 
     document.querySelector('#pagination').appendChild(div);
+
+    // Disable prev button if on first page
+
+    if (global.search.page === 1) {
+        document.querySelector('#prev').disabled = true;
+    }
+
+    // Disable next button
+    if (global.search.page === global.search.totalPages) {
+        document.querySelector('#next').disabled = true;
+    }
+
+    // Next page 
+    document.querySelector('#next').addEventListener('click', async () => {
+        global.search.page++;
+        const { results, total_pages } = await searchAPIData();
+        displaySearchResults(results);
+    });
+
+    // previous page
+    document.querySelector('#prev').addEventListener('click', async () => {
+        global.search.page--;
+        const { results, total_pages } = await searchAPIData();
+        displaySearchResults(results);
+    });
 }
 // Display slider
 async function displaySlider() {
@@ -411,7 +440,7 @@ async function searchAPIData() {
   showSpinner();
 
   const response = await fetch(
-    `${API_URL}search/${global.search.type}?api_key=${API_KEY}&language=en-US&query=${global.search.term}`
+    `${API_URL}search/${global.search.type}?api_key=${API_KEY}&language=en-US&query=${global.search.term}&page=${global.search.page}`
   );
 
   const data = await response.json();

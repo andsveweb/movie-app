@@ -36,16 +36,28 @@ async function displayPopularMovies() {
 
 // Fetch from "the movie data base"
 async function fetchAPIData(endpoint) {
+    // Register your key at https://www.themoviedb.org
+    
     const API_KEY = 'e07d2b8c6617188b355e284591e96250';
     const API_URL = 'https://api.themoviedb.org/3/';
+
+    showSpinner();
 
     const response = await fetch(`${API_URL}${endpoint}?api_key=${API_KEY}&language=en-US`);
 
     const data = await response.json();
 
+    hideSpinner();
+
     return data;
 }
 
+function showSpinner() {
+    document.querySelector('.spinner').classList.add('show');
+}
+function hideSpinner() {
+    document.querySelector('.spinner').classList.remove('show');
+}
 // Highlight active link
 function highlightActiveLink() {
     const links = document.querySelectorAll('.nav-link');
